@@ -193,14 +193,12 @@ def getDTPInfo(data_root, year, months, regions, region_id="0"):
             write_log(log_text)
             continue
 
-        dtp_dict = {"data": {}}
-        dtp_dict["data"]["year"] = str(year)
-        dtp_dict["data"]["region_code"] = region["id"]
-        dtp_dict["data"]["region_name"] = region["name"]
-        dtp_dict["data"]["month_first"] = months[0]
-        dtp_dict["data"]["month_last"] = months[-1]
-
-        dtp_dict["data"]["cards"] = []
+        dtp_dict = {}
+        dtp_dict["year"] = str(year)
+        dtp_dict["region_code"] = region["id"]
+        dtp_dict["region_name"] = region["name"]
+        dtp_dict["month_first"] = months[0]
+        dtp_dict["month_last"] = months[-1]
 
         # муниципальные образования в регионе
         districts = json.loads(region["districts"])
@@ -224,18 +222,19 @@ def getDTPInfo(data_root, year, months, regions, region_id="0"):
                                                                       months[0], months[len(months) - 1], year)
             print(log_text)
             write_log(log_text)
-            dtp_dict["data"]["cards"] += cards
 
-        dtp_dict_json = {}
-        dtp_dict_json["data"] = json.dumps(dtp_dict["data"]).encode('utf8').decode('unicode-escape')
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
-        filename = os.path.join(data_dir, "{} {} {}-{}.{}.json".format(region["id"], region["name"], months[0], months[len(months) - 1], year))
-        with codecs.open(filename, "w", encoding="utf-8") as f:
-            json.dump(dtp_dict_json, f, ensure_ascii=False, separators=(',', ':'))
-            log_text = u"Сохранены данные для {} за {}-{}.{}".format(region["name"], months[0], months[len(months) - 1], year)
-            print(log_text)
-            write_log(log_text)
+            dtp_dict["district_code"] = district["id"]
+            dtp_dict["district_name"] = district["name"]
+            dtp_dict["cards"] = cards
+            
+            if not os.path.exists(data_dir):
+                os.makedirs(data_dir)
+            filename = os.path.join(data_dir, "{} {} {} {} {}-{}.{}.json".format(region["id"], region["name"], district["id"], district["name"], months[0], months[len(months) - 1], year))
+            with codecs.open(filename, "w", encoding="utf-8") as f:
+                json.dump(dtp_dict, f, ensure_ascii=False, separators=(',', ':'))
+                log_text = u"Сохранены данные для {}, {} за {}-{}.{}".format(region["name"], district["name"], months[0], months[len(months) - 1], year)
+                print(log_text)
+                write_log(log_text)
 
         # если запрошены данные только по одному региону
         if region["id"] == region_id:
