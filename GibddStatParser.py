@@ -13,12 +13,12 @@ import argparse
 log_filename = "parselog.log"
 
 def create_log():
-    with open(log_filename, 'w') as f:
+    with open(os.path.join(sys.path[0], log_filename), 'w') as f:
         pass
 
 def write_log(text):
     timestamp = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
-    with open(log_filename, 'a') as f:
+    with open(os.path.join(sys.path[0], log_filename), 'a') as f:
         f.write("{} {}".format(timestamp, text))
         f.write("\n")
 
