@@ -174,7 +174,7 @@ def getDTPData(region_id, region_name, district_id, district_name, months, year)
 # важно! движок отдает все загруженные на сайт карточки, поэтому их может оказаться больше, чем в интерфейсе пользователя
 # реализована догрузка: парсер не будет повторно качать уже загруженные данные
 def getDTPInfo(data_root, year, months, regions, region_id="0"):
-    data_dir = os.path.join(data_root, year)
+    data_dir = data_root
 
     regions_downloaded = []
     if os.path.exists(data_dir):
@@ -308,7 +308,7 @@ def main():
             months = list(range(1, 13, 1))
 
     # загружаем данные из справочника ОКАТО-кодов регионов и муниципалитетов
-    filename = "regions.json"
+    filename = os.path.join(sys.path[0], "regions.json")
     with codecs.open(filename, "r", "utf-8") as f:
         regions = json.loads(json.loads(json.dumps(f.read())))
 
